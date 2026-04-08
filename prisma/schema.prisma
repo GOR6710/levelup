@@ -3,52 +3,119 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  username      String
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+  
+  stats         UserStat?
+  attributes    Stat[]
+  tasks         Task[]
+  achievements  Achievement[]
+  activities    ActivityLog[]
+  conversations AIConversation[]
+
+  @@map("users")
+}
+
+model UserStat {
+  id               String    @id @default(uuid())
+  userId           String    @unique @map("user_id")
+  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  level            Int       @default(1)
+  currentXP        Int       @default(0) @map("current_xp")
+  maxXP            Int       @default(100) @map("max_xp")
+  totalPower       Int       @default(0) @map("total_power")
+  achievementsCount Int      @default(0) @map("achievements_count")
+  streakDays       Int       @default(0) @map("streak_days")
+  lastActiveDate   DateTime? @map("last_active_date")
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @updatedAt @map("updated_at")
+
+  @@map("user_stats")
+}
+
+model Stat {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name      String
+  value     Int      @default(0)
+  maxValue  Int      @default(100) @map("max_value")
+  color     String   @default("#00d4ff")
+  icon      String   @default("⭐")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([userId, name])
+  @@map("stats")
+}
+
 model Task {
-  id          String   @id @default(cuid())
+  id          String    @id @default(uuid())
+  userId      String    @map("user_id")
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   title       String
   description String?
-  type        String   // main, daily, side
-  difficulty  String   // easy, medium, hard
-  xp          Int      @default(100)
-  completed   Boolean  @default(false)
-  completedAt DateTime?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  type        String    // main, daily, side
+  difficulty  String    // easy, medium, hard
+  xp          Int       @default(0)
+  completed   Boolean   @default(false)
+  completedAt DateTime? @map("completed_at")
+  dueDate     DateTime? @map("due_date")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
 
+  @@index([userId])
+  @@index([completed])
+  @@index([type])
   @@map("tasks")
 }
 
-model UserState {
-  id          String   @id @default(cuid())
-  level       Int      @default(1)
-  currentXP   Int      @default(0)
-  maxXP       Int      @default(1000)
-  achievements Int     @default(0)
-  streak      Int      @default(0)
-  stats       String   // JSON string of stats array
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+model Achievement {
+  id          String    @id @default(uuid())
+  userId      String    @map("user_id")
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name        String
+  description String
+  icon        String?
+  unlockedAt  DateTime? @map("unlocked_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
 
-  @@map("user_state")
+  @@index([userId])
+  @@map("achievements")
 }
 
-model Achievement {
-  id          String   @id @default(cuid())
-  title       String
+model ActivityLog {
+  id          String    @id @default(uuid())
+  userId      String    @map("user_id")
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type        String
   description String
-  icon        String   // emoji or icon name
-  category    String   // task, level, streak, special
-  requirement String   // 解锁条件描述
-  xpReward    Int      @default(0)
-  unlocked    Boolean  @default(false)
-  unlockedAt  DateTime?
-  progress    Int      @default(0)  // 当前进度
-  target      Int      @default(1)  // 目标值
-  createdAt   DateTime @default(now())
+  xpGained    Int       @default(0) @map("xp_gained")
+  metadata    Json?
+  createdAt   DateTime  @default(now()) @map("created_at")
 
-  @@map("achievements")
+  @@index([userId])
+  @@index([createdAt])
+  @@map("activity_log")
+}
+
+model AIConversation {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role      String   // user, assistant, system
+  content   String
+  metadata  Json?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([userId])
+  @@map("ai_conversations")
 }
