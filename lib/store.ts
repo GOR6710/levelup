@@ -1,5 +1,20 @@
 import { prisma } from './prisma'
 
+export interface Achievement {
+  id: string
+  title: string
+  description: string
+  icon: string
+  category: 'task' | 'level' | 'streak'
+  requirement: string
+  xpReward: number
+  target: number
+  progress: number
+  unlocked: boolean
+  unlockedAt?: Date
+  createdAt: Date
+}
+
 export interface Task {
   id: string
   title: string

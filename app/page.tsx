@@ -520,45 +520,4 @@ export default function Home() {
       </motion.footer>
     </div>
   )
-}tasks}
-              onTasksChange={handleTasksChange}
-              onTaskComplete={handleTaskComplete}
-            />
-          </motion.div>
-
-          {/* Right Column - AI Assistant */}
-          <motion.div
-            initial={{ x: 50, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            transition={{ delay: 0.3 }}
-          >
-            <AIAssistant 
-              userContext={{
-                level,
-                currentXP,
-                maxXP,
-                achievements,
-                streak,
-                stats: stats.map(s => ({ name: s.name, value: s.value }))
-              }}
-              onTasksUpdate={handleRefresh}
-              onTaskComplete={handleAITaskComplete}
-            />
-          </motion.div>
-        </div>
-      </main>
-
-      {/* Footer */}
-      <motion.footer
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.5 }}
-        className="border-t border-[#1e3a5f] mt-12 py-6"
-      >
-        <div className="container mx-auto px-4 text-center text-[#64748b] text-sm">
-          <p>LevelUp v1.4.0 - SQLite + AI Function Calling 🚀</p>
-        </div>
-      </motion.footer>
-    </div>
-  )
 }

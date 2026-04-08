@@ -1,0 +1,29 @@
+# Neon Database Configuration
+
+## Project Details
+- **Project Name**: levelup-prod
+- **Project ID**: round-waterfall-65857223
+- **Region**: aws-ap-southeast-1 (Singapore)
+- **PostgreSQL Version**: 17
+
+## Connection URI
+```
+postgresql://neondb_owner:npg_sgbYmpct04Un@ep-noisy-forest-a148nhkt.ap-southeast-1.aws.neon.tech/neondb?sslmode=require
+```
+
+## Connection Parameters
+- **Host**: ep-noisy-forest-a148nhkt.ap-southeast-1.aws.neon.tech
+- **Database**: neondb
+- **Username**: neondb_owner
+- **Password**: npg_sgbYmpct04Un
+- **SSL Mode**: require
+
+## Pooler Host (for connection pooling)
+- **Host**: ep-noisy-forest-a148nhkt-pooler.ap-southeast-1.aws.neon.tech
+
+## Branch
+- **Main Branch**: br-bold-cherry-a1sk5r0c
+- **Endpoint**: ep-noisy-forest-a148nhkt
+
+## Created At
+2026-04-08 14:12:05 (Asia/Shanghai)
