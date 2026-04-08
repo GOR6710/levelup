@@ -1,0 +1,365 @@
+{
+  "project": "LevelUp v3.0",
+  "description": "尽善尽美版 - 视觉震撼、游戏深度、数据洞察、智能陪伴",
+  "features": [
+    {
+      "id": "v3-01",
+      "category": "visual",
+      "priority": 1,
+      "description": "全局配色升级 - 高级暗色系 + 渐变色系统",
+      "file": "app/globals.css",
+      "steps": [
+        "定义新的 CSS 变量系统（主色、辅助色、强调色、渐变）",
+        "更新 tailwind.config.ts 添加自定义颜色",
+        "替换所有硬编码颜色为 CSS 变量",
+        "添加动态光效动画类"
+      ],
+      "passes": true,
+      "verification": "所有页面显示新的配色方案，没有颜色冲突"
+    },
+    {
+      "id": "v3-02",
+      "category": "visual",
+      "priority": 1,
+      "description": "全局动画系统 - 页面过渡、组件动画、微交互",
+      "file": "components/animations/",
+      "steps": [
+        "创建动画组件库（FadeIn, SlideUp, Scale, Glow）",
+        "添加页面切换过渡动画",
+        "实现按钮悬停 glow + scale 效果",
+        "创建数字滚动动画组件"
+      ],
+      "passes": false,
+      "verification": "所有交互都有流畅动画，60fps"
+    },
+    {
+      "id": "v3-03",
+      "category": "visual",
+      "priority": 2,
+      "description": "Header 组件视觉升级 - 动态背景 + 等级特效",
+      "file": "components/header.tsx",
+      "steps": [
+        "添加动态渐变背景",
+        "等级提升时添加粒子特效",
+        "XP 进度条添加光效流动",
+        "优化布局间距和字体层级"
+      ],
+      "passes": false,
+      "verification": "Header 视觉效果震撼，动画流畅"
+    },
+    {
+      "id": "v3-04",
+      "category": "visual",
+      "priority": 2,
+      "description": "StatsPanel 视觉升级 - 雷达图优化 + 属性详情",
+      "file": "components/stats-panel.tsx",
+      "steps": [
+        "雷达图添加悬停显示详情",
+        "属性卡片添加升级进度",
+        "添加属性变化动画",
+        "优化毛玻璃效果"
+      ],
+      "passes": false,
+      "verification": "雷达图交互流畅，属性展示清晰"
+    },
+    {
+      "id": "v3-05",
+      "category": "visual",
+      "priority": 2,
+      "description": "TaskSystem 视觉升级 - 任务卡片 + 完成动画",
+      "file": "components/task-system.tsx",
+      "steps": [
+        "任务卡片添加悬停效果",
+        "完成任务时添加粒子爆炸动画",
+        "添加任务类型图标动画",
+        "优化筛选器视觉"
+      ],
+      "passes": false,
+      "verification": "任务操作有反馈动画，体验流畅"
+    },
+    {
+      "id": "v3-06",
+      "category": "visual",
+      "priority": 2,
+      "description": "AIAssistant 视觉升级 - 打字机效果 + 思考动画",
+      "file": "components/ai-assistant.tsx",
+      "steps": [
+        "实现打字机效果显示 AI 回复",
+        "添加 AI 思考中的动画",
+        "优化消息气泡样式",
+        "添加快捷操作按钮动画"
+      ],
+      "passes": false,
+      "verification": "AI 对话体验自然流畅"
+    },
+    {
+      "id": "v3-07",
+      "category": "visual",
+      "priority": 2,
+      "description": "AchievementSystem 视觉升级 - 解锁特效 + 3D 卡片",
+      "file": "components/achievement-system.tsx",
+      "steps": [
+        "成就解锁时全屏特效",
+        "成就卡片 3D 翻转效果",
+        "添加进度环动画",
+        "优化成就图标"
+      ],
+      "passes": false,
+      "verification": "成就解锁有震撼效果"
+    },
+    {
+      "id": "v3-08",
+      "category": "game",
+      "priority": 3,
+      "description": "技能树数据库模型",
+      "file": "prisma/schema.prisma",
+      "steps": [
+        "添加 Skill 模型",
+        "添加 UserSkill 关联表",
+        "运行 prisma migrate",
+        "创建种子数据"
+      ],
+      "passes": false,
+      "verification": "数据库迁移成功，种子数据正确"
+    },
+    {
+      "id": "v3-09",
+      "category": "game",
+      "priority": 3,
+      "description": "技能树可视化组件",
+      "file": "components/skill-tree.tsx",
+      "steps": [
+        "创建树状图布局组件",
+        "实现节点连线 SVG",
+        "添加节点状态样式（锁定/可解锁/已解锁）",
+        "实现点击解锁交互"
+      ],
+      "passes": false,
+      "verification": "技能树可视化正确，交互流畅"
+    },
+    {
+      "id": "v3-10",
+      "category": "game",
+      "priority": 4,
+      "description": "技能效果系统",
+      "file": "lib/skills.ts",
+      "steps": [
+        "实现技能效果计算",
+        "集成到 XP 计算中",
+        "添加技能解锁 API",
+        "创建技能效果提示"
+      ],
+      "passes": false,
+      "verification": "技能效果正确生效"
+    },
+    {
+      "id": "v3-11",
+      "category": "game",
+      "priority": 4,
+      "description": "装备系统数据库模型",
+      "file": "prisma/schema.prisma",
+      "steps": [
+        "添加 Equipment 模型",
+        "添加 UserEquipment 关联表",
+        "运行迁移",
+        "创建基础装备数据"
+      ],
+      "passes": false,
+      "verification": "装备数据模型正确"
+    },
+    {
+      "id": "v3-12",
+      "category": "game",
+      "priority": 4,
+      "description": "装备系统 UI",
+      "file": "components/equipment-system.tsx",
+      "steps": [
+        "创建装备栏位界面",
+        "实现装备穿戴/卸下",
+        "添加装备属性显示",
+        "创建装备获取弹窗"
+      ],
+      "passes": false,
+      "verification": "装备系统功能完整"
+    },
+    {
+      "id": "v3-13",
+      "category": "game",
+      "priority": 5,
+      "description": "连击系统",
+      "file": "lib/streak.ts",
+      "steps": [
+        "实现连击计数逻辑",
+        "添加连击倍数计算",
+        "创建连击显示组件",
+        "添加连击中断保护机制"
+      ],
+      "passes": false,
+      "verification": "连击计数准确，倍数正确"
+    },
+    {
+      "id": "v3-14",
+      "category": "game",
+      "priority": 5,
+      "description": "习惯追踪系统",
+      "file": "components/habit-tracker.tsx",
+      "steps": [
+        "创建习惯数据模型",
+        "实现习惯打卡",
+        "添加习惯热力图",
+        "创建习惯提醒"
+      ],
+      "passes": false,
+      "verification": "习惯追踪功能正常"
+    },
+    {
+      "id": "v3-15",
+      "category": "game",
+      "priority": 6,
+      "description": "随机事件系统",
+      "file": "lib/events.ts",
+      "steps": [
+        "设计事件类型和触发条件",
+        "实现事件生成逻辑",
+        "创建事件弹窗 UI",
+        "添加事件奖励"
+      ],
+      "passes": false,
+      "verification": "随机事件正常触发和奖励"
+    },
+    {
+      "id": "v3-16",
+      "category": "data",
+      "priority": 7,
+      "description": "历史数据追踪",
+      "file": "prisma/schema.prisma",
+      "steps": [
+        "添加 DailySnapshot 模型",
+        "创建数据快照 cron 任务",
+        "实现历史数据查询 API"
+      ],
+      "passes": false,
+      "verification": "历史数据正确记录"
+    },
+    {
+      "id": "v3-17",
+      "category": "data",
+      "priority": 7,
+      "description": "统计仪表盘页面",
+      "file": "app/stats/page.tsx",
+      "steps": [
+        "创建统计页面路由",
+        "集成 Recharts 图表",
+        "实现 XP 增长曲线",
+        "添加任务完成统计"
+      ],
+      "passes": false,
+      "verification": "图表正确显示数据"
+    },
+    {
+      "id": "v3-18",
+      "category": "data",
+      "priority": 8,
+      "description": "数据分析洞察",
+      "file": "lib/analytics.ts",
+      "steps": [
+        "实现数据分析算法",
+        "生成个性化报告",
+        "添加趋势预测",
+        "创建数据对比功能"
+      ],
+      "passes": false,
+      "verification": "分析结果准确有用"
+    },
+    {
+      "id": "v3-19",
+      "category": "ai",
+      "priority": 9,
+      "description": "AI 上下文记忆",
+      "file": "prisma/schema.prisma",
+      "steps": [
+        "添加 Conversation 模型",
+        "保存对话历史",
+        "实现上下文加载",
+        "限制历史轮数"
+      ],
+      "passes": false,
+      "verification": "AI 能记住上下文"
+    },
+    {
+      "id": "v3-20",
+      "category": "ai",
+      "priority": 9,
+      "description": "AI 用户画像",
+      "file": "lib/ai-profile.ts",
+      "steps": [
+        "分析用户行为数据",
+        "生成用户画像",
+        "集成到 AI 提示词",
+        "更新画像算法"
+      ],
+      "passes": false,
+      "verification": "AI 能给出个性化建议"
+    },
+    {
+      "id": "v3-21",
+      "category": "ai",
+      "priority": 10,
+      "description": "AI 主动交互",
+      "file": "components/ai-proactive.tsx",
+      "steps": [
+        "实现主动问候逻辑",
+        "添加任务提醒",
+        "创建鼓励系统",
+        "优化触发时机"
+      ],
+      "passes": false,
+      "verification": "AI 主动交互自然不打扰"
+    },
+    {
+      "id": "v3-22",
+      "category": "mobile",
+      "priority": 11,
+      "description": "移动端底部导航",
+      "file": "components/mobile-nav.tsx",
+      "steps": [
+        "创建底部导航组件",
+        "实现页面切换",
+        "优化触摸区域",
+        "添加激活状态"
+      ],
+      "passes": false,
+      "verification": "移动端导航易用"
+    },
+    {
+      "id": "v3-23",
+      "category": "mobile",
+      "priority": 11,
+      "description": "响应式布局优化",
+      "file": "app/page.tsx",
+      "steps": [
+        "优化断点设计",
+        "调整布局适配",
+        "优化字体大小",
+        "测试各尺寸设备"
+      ],
+      "passes": false,
+      "verification": "各尺寸显示正常"
+    },
+    {
+      "id": "v3-24",
+      "category": "mobile",
+      "priority": 12,
+      "description": "PWA 支持",
+      "file": "public/manifest.json",
+      "steps": [
+        "创建 manifest.json",
+        "添加 Service Worker",
+        "实现离线缓存",
+        "测试添加到主屏幕"
+      ],
+      "passes": false,
+      "verification": "PWA 功能正常"
+    }
+  ]
+}

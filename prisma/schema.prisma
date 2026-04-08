@@ -1,0 +1,54 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Task {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  type        String   // main, daily, side
+  difficulty  String   // easy, medium, hard
+  xp          Int      @default(100)
+  completed   Boolean  @default(false)
+  completedAt DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("tasks")
+}
+
+model UserState {
+  id          String   @id @default(cuid())
+  level       Int      @default(1)
+  currentXP   Int      @default(0)
+  maxXP       Int      @default(1000)
+  achievements Int     @default(0)
+  streak      Int      @default(0)
+  stats       String   // JSON string of stats array
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("user_state")
+}
+
+model Achievement {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  icon        String   // emoji or icon name
+  category    String   // task, level, streak, special
+  requirement String   // 解锁条件描述
+  xpReward    Int      @default(0)
+  unlocked    Boolean  @default(false)
+  unlockedAt  DateTime?
+  progress    Int      @default(0)  // 当前进度
+  target      Int      @default(1)  // 目标值
+  createdAt   DateTime @default(now())
+
+  @@map("achievements")
+}

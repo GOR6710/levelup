@@ -1,0 +1,28 @@
+{
+  "project": "LevelUp v3.0 尽善尽美版",
+  "description": "将 LevelUp 打造成视觉震撼、游戏深度、数据洞察、智能陪伴的个人成长系统",
+  "version": "3.0.0",
+  "milestones": [
+    { "name": "M1: 视觉升级", "target": "6h", "description": "全局样式重构 + 动画系统" },
+    { "name": "M2: 游戏化增强", "target": "14h", "description": "技能树 + 装备 + 连击系统" },
+    { "name": "M3: 数据洞察", "target": "18h", "description": "统计页面 + 历史追踪" },
+    { "name": "M4: AI 智能化", "target": "22h", "description": "上下文记忆 + 主动交互" },
+    { "name": "M5: 移动优化", "target": "24h", "description": "响应式 + PWA" }
+  ],
+  "rules": [
+    "每次会话开始前必须运行 bash init_v3.sh",
+    "每个功能完成后必须 git commit + push",
+    "只修改 feature_list_v3.json 的 passes 字段",
+    "遇到阻塞立即停止并记录",
+    "每小时通过 cron 发送进度报告"
+  ],
+  "files": [
+    "feature_list_v3.json",
+    "progress_v3.txt",
+    "init_v3.sh",
+    "task_v3.json",
+    "OPTIMIZATION_PLAN_v3.md"
+  ],
+  "startTime": "2026-04-08T02:00:00+08:00",
+  "deadline": "2026-04-09T02:00:00+08:00"
+}

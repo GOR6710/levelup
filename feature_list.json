@@ -1,0 +1,349 @@
+{
+  "features": [
+    {
+      "id": "core-01",
+      "name": "基础任务系统",
+      "description": "创建、完成、删除任务，支持不同类型和难度",
+      "category": "core",
+      "priority": "high",
+      "passes": true,
+      "steps": [
+        "实现 Task 类型定义",
+        "创建任务列表组件",
+        "实现任务 CRUD 操作",
+        "添加任务筛选和搜索"
+      ],
+      "verification": [
+        "可以创建新任务",
+        "可以标记任务完成",
+        "可以删除任务",
+        "任务列表正确显示"
+      ]
+    },
+    {
+      "id": "core-02",
+      "name": "AI 助手集成",
+      "description": "OpenRouter API 集成，支持对话和任务操作",
+      "category": "core",
+      "priority": "high",
+      "passes": true,
+      "steps": [
+        "配置 OpenRouter API",
+        "实现基础对话功能",
+        "添加 Function Calling",
+        "实现 AI 操作任务"
+      ],
+      "verification": [
+        "AI 可以正常对话",
+        "AI 可以创建任务",
+        "AI 可以完成任务",
+        "AI 可以删除任务"
+      ]
+    },
+    {
+      "id": "core-03",
+      "name": "属性面板",
+      "description": "六维属性雷达图和进度条展示",
+      "category": "core",
+      "priority": "high",
+      "passes": true,
+      "steps": [
+        "创建六维属性数据模型",
+        "实现雷达图组件",
+        "实现进度条组件",
+        "属性值动态更新"
+      ],
+      "verification": [
+        "雷达图正确显示",
+        "进度条反映属性值",
+        "属性可以更新"
+      ]
+    },
+    {
+      "id": "core-04",
+      "name": "等级系统",
+      "description": "等级、XP、升级机制",
+      "category": "core",
+      "priority": "high",
+      "passes": true,
+      "steps": [
+        "实现等级计算逻辑",
+        "创建 XP 进度条",
+        "实现升级动画",
+        "等级与属性关联"
+      ],
+      "verification": [
+        "XP 增加时进度条更新",
+        "达到阈值时升级",
+        "升级时属性随机增加"
+      ]
+    },
+    {
+      "id": "core-05",
+      "name": "任务联动系统",
+      "description": "任务完成 → XP → 升级 → 属性增加",
+      "category": "core",
+      "priority": "high",
+      "passes": true,
+      "steps": [
+        "任务完成获得 XP",
+        "XP 满升级",
+        "升级随机增加属性",
+        "成就计数更新"
+      ],
+      "verification": [
+        "完成任务获得正确 XP",
+        "XP 满时触发升级",
+        "升级时属性增加",
+        "Header 实时更新"
+      ]
+    },
+    {
+      "id": "db-01",
+      "name": "SQLite 数据库",
+      "description": "配置 SQLite 和 Prisma ORM",
+      "category": "database",
+      "priority": "high",
+      "passes": true,
+      "steps": [
+        "安装 Prisma 依赖",
+        "配置数据库连接",
+        "创建数据模型",
+        "生成 Prisma Client"
+      ],
+      "verification": [
+        "prisma/schema.prisma 存在",
+        "prisma/dev.db 可以创建",
+        "Prisma Client 可以生成"
+      ]
+    },
+    {
+      "id": "db-02",
+      "name": "数据模型",
+      "description": "Task 和 UserState 模型",
+      "category": "database",
+      "priority": "high",
+      "passes": true,
+      "steps": [
+        "定义 Task 模型",
+        "定义 UserState 模型",
+        "配置字段类型",
+        "创建关联关系"
+      ],
+      "verification": [
+        "模型定义正确",
+        "数据库迁移成功",
+        "可以读写数据"
+      ]
+    },
+    {
+      "id": "db-03",
+      "name": "数据层重构",
+      "description": "lib/store.ts 使用 Prisma",
+      "category": "database",
+      "priority": "high",
+      "passes": true,
+      "steps": [
+        "重写 store.ts 使用 Prisma",
+        "实现异步 CRUD 操作",
+        "添加错误处理",
+        "保持 API 兼容"
+      ],
+      "verification": [
+        "所有 store 函数正常工作",
+        "数据持久化到数据库",
+        "API 响应正确"
+      ]
+    },
+    {
+      "id": "feat-01",
+      "name": "成就系统",
+      "description": "解锁成就、成就展示",
+      "category": "feature",
+      "priority": "medium",
+      "passes": true,
+      "steps": [
+        "创建 Achievement 模型",
+        "实现成就解锁逻辑",
+        "创建成就展示组件",
+        "添加成就通知"
+      ],
+      "verification": [
+        "成就可以解锁",
+        "成就正确显示",
+        "解锁时有通知"
+      ]
+    },
+    {
+      "id": "feat-02",
+      "name": "技能树",
+      "description": "技能树可视化、解锁机制",
+      "category": "feature",
+      "priority": "medium",
+      "passes": false,
+      "steps": [
+        "创建 Skill 模型",
+        "实现技能树数据结构",
+        "创建技能树可视化组件",
+        "实现解锁逻辑"
+      ],
+      "verification": [
+        "技能树正确显示",
+        "技能可以解锁",
+        "解锁条件正确判断"
+      ]
+    },
+    {
+      "id": "feat-03",
+      "name": "商店系统",
+      "description": "虚拟商品、购买机制",
+      "category": "feature",
+      "priority": "low",
+      "passes": false,
+      "steps": [
+        "创建 ShopItem 模型",
+        "实现货币系统",
+        "创建商店界面",
+        "实现购买逻辑"
+      ],
+      "verification": [
+        "商品列表显示",
+        "可以购买商品",
+        "货币正确扣除"
+      ]
+    },
+    {
+      "id": "feat-04",
+      "name": "统计图表",
+      "description": "任务完成趋势、属性变化图表",
+      "category": "feature",
+      "priority": "medium",
+      "passes": false,
+      "steps": [
+        "集成 Recharts",
+        "创建任务完成趋势图",
+        "创建属性变化图",
+        "添加时间筛选"
+      ],
+      "verification": [
+        "图表正确渲染",
+        "数据准确显示",
+        "交互正常"
+      ]
+    },
+    {
+      "id": "feat-05",
+      "name": "数据导出",
+      "description": "导出任务、统计数据",
+      "category": "feature",
+      "priority": "low",
+      "passes": false,
+      "steps": [
+        "实现 JSON 导出",
+        "实现 CSV 导出",
+        "创建导出按钮",
+        "添加导出选项"
+      ],
+      "verification": [
+        "可以导出 JSON",
+        "可以导出 CSV",
+        "文件内容正确"
+      ]
+    },
+    {
+      "id": "ui-01",
+      "name": "主题切换",
+      "description": "暗黑/亮色模式切换",
+      "category": "ui",
+      "priority": "low",
+      "passes": false,
+      "steps": [
+        "配置 next-themes",
+        "实现主题切换按钮",
+        "适配所有组件",
+        "保存主题偏好"
+      ],
+      "verification": [
+        "可以切换主题",
+        "所有组件适配",
+        "偏好持久化"
+      ]
+    },
+    {
+      "id": "ui-02",
+      "name": "动画优化",
+      "description": "Framer Motion 动画效果",
+      "category": "ui",
+      "priority": "low",
+      "passes": false,
+      "steps": [
+        "添加页面过渡动画",
+        "优化任务列表动画",
+        "添加升级动画",
+        "优化交互反馈"
+      ],
+      "verification": [
+        "动画流畅",
+        "不影响性能",
+        "交互反馈清晰"
+      ]
+    },
+    {
+      "id": "api-01",
+      "name": "更多 AI 工具",
+      "description": "添加更多 Function Calling 工具",
+      "category": "api",
+      "priority": "medium",
+      "passes": false,
+      "steps": [
+        "添加生成报告工具",
+        "添加分析统计工具",
+        "添加批量操作工具",
+        "优化工具描述"
+      ],
+      "verification": [
+        "新工具可以调用",
+        "参数正确传递",
+        "结果正确返回"
+      ]
+    },
+    {
+      "id": "api-02",
+      "name": "错误处理优化",
+      "description": "API 错误处理和重试机制",
+      "category": "api",
+      "priority": "medium",
+      "passes": false,
+      "steps": [
+        "添加全局错误处理",
+        "实现重试机制",
+        "优化错误提示",
+        "添加日志记录"
+      ],
+      "verification": [
+        "错误被捕获",
+        "用户看到友好提示",
+        "日志记录完整"
+      ]
+    },
+    {
+      "id": "api-03",
+      "name": "性能优化",
+      "description": "API 响应优化和缓存",
+      "category": "api",
+      "priority": "low",
+      "passes": false,
+      "steps": [
+        "添加响应缓存",
+        "优化数据库查询",
+        "实现分页加载",
+        "减少不必要请求"
+      ],
+      "verification": [
+        "响应时间减少",
+        "数据库查询优化",
+        "内存使用合理"
+      ]
+    }
+  ]
+}

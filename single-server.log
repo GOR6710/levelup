@@ -1,0 +1,75 @@
+
+> levelup@1.0.0 dev
+> next dev
+
+  ▲ Next.js 14.2.0
+  - Local:        http://localhost:3000
+  - Environments: .env
+
+ ✓ Starting...
+ ✓ Ready in 1929ms
+ ✓ Compiled /api/chat in 296ms (53 modules)
+ POST /api/chat 200 in 9074ms
+ ○ Compiling / ...
+ ✓ Compiled / in 7.2s (2511 modules)
+ GET / 200 in 7842ms
+ ✓ Compiled in 767ms (1261 modules)
+ ✓ Compiled /api/chat in 412ms (1271 modules)
+ POST /api/chat 200 in 10105ms
+ ✓ Compiled in 934ms (2502 modules)
+ ✓ Compiled in 928ms (2502 modules)
+ ✓ Compiled in 925ms (2488 modules)
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 1146ms (2491 modules)
+ GET / 200 in 314ms
+ ✓ Compiled in 624ms (2491 modules)
+ ✓ Compiled in 1043ms (2488 modules)
+ ✓ Compiled in 1794ms (2504 modules)
+ ✓ Compiled in 1792ms (2506 modules)
+ ✓ Compiled /api/user in 348ms (1273 modules)
+ ✓ Compiled (1275 modules)
+ GET /api/user 200 in 546ms
+ GET /api/tasks 200 in 551ms
+ GET /api/user 200 in 6ms
+ GET /api/tasks 200 in 9ms
+ ⨯ ./components/task-system.tsx:18:1
+Module not found: Can't resolve '@/components/ui/alert-dialog'
+[0m [90m 16 |[39m   [33mDialogTrigger[39m[33m,[39m[0m
+[0m [90m 17 |[39m } [36mfrom[39m [32m'@/components/ui/dialog'[39m[0m
+[0m[31m[1m>[22m[39m[90m 18 |[39m [36mimport[39m {[0m
+[0m [90m    |[39m [31m[1m^[22m[39m[0m
+[0m [90m 19 |[39m   [33mAlertDialog[39m[33m,[39m[0m
+[0m [90m 20 |[39m   [33mAlertDialogAction[39m[33m,[39m[0m
+[0m [90m 21 |[39m   [33mAlertDialogCancel[39m[33m,[39m[0m
+
+https://nextjs.org/docs/messages/module-not-found
+
+Import trace for requested module:
+./app/page.tsx
+ ⨯ ./components/ui/alert-dialog.tsx:4:1
+Module not found: Can't resolve '@radix-ui/react-alert-dialog'
+[0m [90m 2 |[39m[0m
+[0m [90m 3 |[39m [36mimport[39m [33m*[39m [36mas[39m [33mReact[39m [36mfrom[39m [32m"react"[39m[0m
+[0m[31m[1m>[22m[39m[90m 4 |[39m [36mimport[39m [33m*[39m [36mas[39m [33mAlertDialogPrimitive[39m [36mfrom[39m [32m"@radix-ui/react-alert-dialog"[39m[0m
+[0m [90m   |[39m [31m[1m^[22m[39m[0m
+[0m [90m 5 |[39m[0m
+[0m [90m 6 |[39m [36mimport[39m { cn } [36mfrom[39m [32m"@/lib/utils"[39m[0m
+[0m [90m 7 |[39m [36mimport[39m { buttonVariants } [36mfrom[39m [32m"@/components/ui/button"[39m[0m
+
+https://nextjs.org/docs/messages/module-not-found
+
+Import trace for requested module:
+./components/task-system.tsx
+./app/page.tsx
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled in 580ms (2504 modules)
+ ✓ Compiled /api/user in 217ms (1279 modules)
+ ✓ Compiled (1281 modules)
+ GET /api/tasks 200 in 852ms
+ GET /api/user 200 in 853ms
+ GET / 200 in 854ms
+ GET /api/tasks 200 in 11ms
+ GET /api/user 200 in 15ms
+ GET /api/tasks 200 in 12ms
+ GET /api/user 200 in 12ms
+[?25h

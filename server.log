@@ -1,0 +1,38 @@
+
+> levelup@1.0.0 dev
+> next dev
+
+ ⚠ Port 3000 is in use, trying 3001 instead.
+  ▲ Next.js 14.2.0
+  - Local:        http://localhost:3001
+  - Environments: .env
+
+ ✓ Starting...
+ ✓ Ready in 1778ms
+ ✓ Compiled /api/chat in 302ms (53 modules)
+AI_PROVIDER from env: evolink
+EVOLINK_API_KEY present: true
+KIMI_API_KEY present: false
+evolink API call failed: {"error":{"code":"invalid_request","message":"No available channel for model 'moonshot-v1-8k' in group 'default' (request id: 20260330233636993953022CFDE7anq)","param":null,"type":"invalid_request_error"}}
+ POST /api/chat 200 in 2089ms
+ ✓ Compiled in 197ms (53 modules)
+AI_PROVIDER from env: evolink
+EVOLINK_API_KEY present: true
+KIMI_API_KEY present: false
+evolink API call failed: {"error":{"code":"invalid_request","message":"No available channel for model 'gpt-4o' in group 'default' (request id: 2026033023373187164457538CcQNrX)","param":null,"type":"invalid_request_error"}}
+ POST /api/chat 200 in 3723ms
+ ✓ Compiled in 33ms
+ ✓ Compiled /api/chat in 185ms (53 modules)
+AI_PROVIDER from env: evolink
+EVOLINK_API_KEY present: true
+KIMI_API_KEY present: false
+evolink API call failed: {"error":{"code":"invalid_request","message":"No available channel for model 'kimi' in group 'default' (request id: 20260330233936924382669saOQc7p1)","param":null,"type":"invalid_request_error"}}
+ POST /api/chat 200 in 2617ms
+ ✓ Compiled in 16ms
+ ✓ Compiled /api/chat in 177ms (53 modules)
+AI_PROVIDER from env: evolink
+EVOLINK_API_KEY present: true
+KIMI_API_KEY present: false
+ POST /api/chat 200 in 12107ms
+ ✓ Compiled in 66ms (53 modules)
+[?25h
