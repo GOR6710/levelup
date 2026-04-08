@@ -1,14 +1,15 @@
 'use client'
 
 import { useState, useCallback, useEffect } from 'react'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { StatsPanel } from '@/components/stats-panel'
 import { LevelSystem } from '@/components/level-system'
 import { TaskSystem, Task } from '@/components/task-system'
 import { StatsDashboard } from '@/components/stats-dashboard'
 import { AchievementSystem } from '@/components/achievement-system'
 import { AIAssistant } from '@/components/ai-assistant'
-import { Zap, Trophy, Flame, TrendingUp, RefreshCw, Wifi, WifiOff } from 'lucide-react'
+import { MobileNav, Tab } from '@/components/mobile-nav'
+import { Zap, Trophy, Flame, TrendingUp, RefreshCw, Wifi, WifiOff, Menu, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
 
@@ -41,6 +42,10 @@ export default function Home() {
   // 加载状态
   const [isLoading, setIsLoading] = useState(false)
   const [isOnline, setIsOnline] = useState(true)
+
+  // 移动端状态
+  const [activeTab, setActiveTab] = useState<Tab>('dashboard')
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   // 计算总战力
   const totalPower = stats.reduce((sum, stat) => sum + stat.value, 0)
@@ -192,6 +197,88 @@ export default function Home() {
     }
   }, [tasks, handleTaskComplete])
 
+  // 渲染移动端内容
+  const renderMobileContent = () => {
+    switch (activeTab) {
+      case 'dashboard':
+        return (
+          <div className="space-y-4 pb-24">
+            <LevelSystem
+              level={level}
+              currentXP={currentXP}
+              maxXP={maxXP}
+              title="初级冒险者"
+              rank="进阶"
+            />
+            <StatsPanel stats={stats} totalPower={totalPower} />
+            <StatsDashboard tasks={tasks} />
+          </div>
+        )
+      case 'tasks':
+        return (
+          <div className="pb-24">
+            <TaskSystem
+              tasks={tasks}
+              onTasksChange={handleTasksChange}
+              onTaskComplete={handleTaskComplete}
+            />
+          </div>
+        )
+      case 'ai':
+        return (
+          <div className="pb-24">
+            <AIAssistant 
+              userContext={{
+                level,
+                currentXP,
+                maxXP,
+                achievements,
+                streak,
+                stats: stats.map(s => ({ name: s.name, value: s.value }))
+              }}
+              onTasksUpdate={handleRefresh}
+              onTaskComplete={handleAITaskComplete}
+            />
+          </div>
+        )
+      case 'achievements':
+        return (
+          <div className="pb-24">
+            <AchievementSystem />
+          </div>
+        )
+      case 'profile':
+        return (
+          <div className="space-y-4 pb-24">
+            <div className="bg-[#0a1628] border border-[#1e3a5f] rounded-xl p-4">
+              <h3 className="text-lg font-bold mb-4">个人资料</h3>
+              <div className="space-y-3">
+                <div className="flex justify-between">
+                  <span className="text-[#64748b]">等级</span>
+                  <span className="text-[#00d4ff] font-bold">{level}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-[#64748b]">总战力</span>
+                  <span className="text-[#00d4ff] font-bold">{totalPower}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-[#64748b]">成就</span>
+                  <span className="text-yellow-400 font-bold">{achievements}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-[#64748b]">连胜</span>
+                  <span className="text-orange-400 font-bold">{streak}天</span>
+                </div>
+              </div>
+            </div>
+            <StatsPanel stats={stats} totalPower={totalPower} />
+          </div>
+        )
+      default:
+        return null
+    }
+  }
+
   return (
     <div className="min-h-screen bg-[#050a14] text-white">
       {/* Header */}
@@ -200,24 +287,26 @@ export default function Home() {
         animate={{ y: 0, opacity: 1 }}
         className="border-b border-[#1e3a5f] bg-[#0a1628]/90 backdrop-blur-md sticky top-0 z-50"
       >
-        <div className="container mx-auto px-4 py-4">
+        <div className="container mx-auto px-4 py-3 lg:py-4">
           <div className="flex items-center justify-between">
+            {/* Logo */}
             <div className="flex items-center gap-3">
               <motion.div
                 whileHover={{ scale: 1.05 }}
-                className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#00d4ff] to-[#7c3aed] flex items-center justify-center shadow-lg shadow-[#00d4ff]/20"
+                className="w-9 h-9 lg:w-10 lg:h-10 rounded-xl bg-gradient-to-br from-[#00d4ff] to-[#7c3aed] flex items-center justify-center shadow-lg shadow-[#00d4ff]/20"
               >
-                <Zap className="w-5 h-5 text-white" />
+                <Zap className="w-4 h-4 lg:w-5 lg:h-5 text-white" />
               </motion.div>
               <div>
-                <h1 className="text-xl font-bold bg-gradient-to-r from-[#00d4ff] to-[#7c3aed] bg-clip-text text-transparent">
+                <h1 className="text-lg lg:text-xl font-bold bg-gradient-to-r from-[#00d4ff] to-[#7c3aed] bg-clip-text text-transparent">
                   LevelUp
                 </h1>
-                <p className="text-xs text-[#64748b]">游戏化成长系统 v1.4</p>
+                <p className="text-[10px] lg:text-xs text-[#64748b] hidden sm:block">游戏化成长系统 v1.4</p>
               </div>
             </div>
 
-            <div className="flex items-center gap-4">
+            {/* Desktop Stats */}
+            <div className="hidden lg:flex items-center gap-4">
               <div className="flex items-center gap-2 text-xs text-[#64748b]">
                 {isOnline ? (
                   <>
@@ -267,13 +356,82 @@ export default function Home() {
                 <span className="text-sm font-medium">{totalPower}</span>
               </motion.div>
             </div>
+
+            {/* Mobile Stats & Menu */}
+            <div className="flex lg:hidden items-center gap-2">
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-[#1e3a5f]/50 border border-[#1e3a5f]"
+              >
+                <Trophy className="w-3 h-3 text-yellow-400" />
+                <span className="text-xs font-medium">{achievements}</span>
+              </motion.div>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8"
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              >
+                {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              </Button>
+            </div>
           </div>
         </div>
+
+        {/* Mobile Menu Dropdown */}
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              className="lg:hidden border-t border-[#1e3a5f] bg-[#0a1628]/95 overflow-hidden"
+            >
+              <div className="container mx-auto px-4 py-3 space-y-3">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-[#64748b]">状态</span>
+                  <div className="flex items-center gap-2">
+                    {isOnline ? (
+                      <>
+                        <Wifi className="w-3 h-3 text-green-400" />
+                        <span className="text-green-400">在线</span>
+                      </>
+                    ) : (
+                      <>
+                        <WifiOff className="w-3 h-3 text-red-400" />
+                        <span className="text-red-400">离线</span>
+                      </>
+                    )}
+                  </div>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-[#64748b]">连胜</span>
+                  <span className="text-orange-400 font-medium">{streak}天</span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-[#64748b]">总战力</span>
+                  <span className="text-[#00d4ff] font-medium">{totalPower}</span>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full border-[#1e3a5f] hover:border-[#00d4ff]"
+                  onClick={handleRefresh}
+                  disabled={isLoading}
+                >
+                  <RefreshCw className={`w-4 h-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
+                  刷新数据
+                </Button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </motion.header>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <main className="container mx-auto px-4 py-4 lg:py-8">
+        {/* Desktop Layout */}
+        <div className="hidden lg:grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left Column - Level & Stats */}
           <motion.div
             initial={{ x: -50, opacity: 0 }}
@@ -304,6 +462,65 @@ export default function Home() {
           >
             <TaskSystem
               tasks={tasks}
+              onTasksChange={handleTasksChange}
+              onTaskComplete={handleTaskComplete}
+            />
+          </motion.div>
+
+          {/* Right Column - AI Assistant */}
+          <motion.div
+            initial={{ x: 50, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ delay: 0.3 }}
+          >
+            <AIAssistant 
+              userContext={{
+                level,
+                currentXP,
+                maxXP,
+                achievements,
+                streak,
+                stats: stats.map(s => ({ name: s.name, value: s.value }))
+              }}
+              onTasksUpdate={handleRefresh}
+              onTaskComplete={handleAITaskComplete}
+            />
+          </motion.div>
+        </div>
+
+        {/* Mobile Layout */}
+        <div className="lg:hidden">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeTab}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.2 }}
+            >
+              {renderMobileContent()}
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      </main>
+
+      {/* Mobile Bottom Navigation */}
+      <MobileNav activeTab={activeTab} onTabChange={setActiveTab} />
+
+      {/* Footer - Desktop Only */}
+      <motion.footer
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.5 }}
+        className="hidden lg:block border-t border-[#1e3a5f] mt-12 py-6"
+      >
+        <div className="container mx-auto px-4 text-center text-[#64748b] text-sm">
+          <p>LevelUp v1.4.0 - SQLite + AI Function Calling 🚀</p>
+        </div>
+      </motion.footer>
+    </div>
+  )
+}tasks}
               onTasksChange={handleTasksChange}
               onTaskComplete={handleTaskComplete}
             />
