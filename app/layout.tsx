@@ -64,7 +64,24 @@ export default function RootLayout({
         {/* iOS Splash Screen */}
         <link rel="apple-touch-startup-image" href="/splash.png" />
       </head>
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        {children}
+        <script dangerouslySetInnerHTML={{
+          __html: `
+            if ('serviceWorker' in navigator) {
+              window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                  .then((registration) => {
+                    console.log('SW registered:', registration.scope);
+                  })
+                  .catch((error) => {
+                    console.log('SW registration failed:', error);
+                  });
+              });
+            }
+          `
+        }} />
+      </body>
     </html>
   )
 }

@@ -15,6 +15,8 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const [error, setError] = useState<string | null>(null);
+
   const getToken = () => {
     if (typeof window !== 'undefined') {
       return localStorage.getItem('accessToken');
@@ -25,6 +27,10 @@ export default function DashboardPage() {
   const sdk = new LevelUpSDK({
     baseURL: API_BASE_URL,
     getToken,
+    onTokenRefresh: (tokens) => {
+      localStorage.setItem('accessToken', tokens.accessToken);
+      localStorage.setItem('refreshToken', tokens.refreshToken);
+    },
   });
 
   useEffect(() => {
@@ -42,6 +48,7 @@ export default function DashboardPage() {
   const loadData = async () => {
     try {
       setLoading(true);
+      setError(null);
       const [tasksRes, statsRes] = await Promise.all([
         sdk.getTasks(),
         sdk.getStats(),
@@ -49,24 +56,42 @@ export default function DashboardPage() {
 
       if (tasksRes.success) {
         setTasks(tasksRes.data || []);
+      } else {
+        setError(tasksRes.error || '加载任务失败');
       }
 
       if (statsRes.success) {
         setStats(statsRes.data?.stats || []);
         setUserStats(statsRes.data?.userStats || null);
+      } else {
+        setError(statsRes.error || '加载统计失败');
       }
-    } catch (err) {
-      setError('加载数据失败');
+    } catch (err: any) {
+      setError(err.message || '加载数据失败');
       console.error(err);
     } finally {
       setLoading(false);
     }
   };
 
+  const [completingTask, setCompletingTask] = useState<string | null>(null);
+  const [showSuccessAnimation, setShowSuccessAnimation] = useState(false);
+
   const handleCompleteTask = async (taskId: string) => {
-    const result = await sdk.completeTask(taskId);
-    if (result.success) {
-      loadData();
+    if (completingTask) return; // 防止重复点击
+    
+    setCompletingTask(taskId);
+    try {
+      const result = await sdk.completeTask(taskId);
+      if (result.success) {
+        setShowSuccessAnimation(true);
+        setTimeout(() => setShowSuccessAnimation(false), 1500);
+        loadData();
+      }
+    } catch (error) {
+      console.error('完成任务失败:', error);
+    } finally {
+      setCompletingTask(null);
     }
   };
 
@@ -103,7 +128,16 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0a1628] text-white">
+    <div className="min-h-screen bg-[#0a1628] text-white relative overflow-hidden">
+      {/* 成功动画 */}
+      {showSuccessAnimation && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none">
+          <div className="bg-green-500 text-white px-8 py-4 rounded-xl text-2xl font-bold animate-bounce">
+            ✅ 任务完成！+XP
+          </div>
+        </div>
+      )}
+      
       {/* Header */}
       <header className="bg-[#0f2642] border-b border-[#1e3a5f] px-6 py-4">
         <div className="max-w-6xl mx-auto flex justify-between items-center">
@@ -123,6 +157,21 @@ export default function DashboardPage() {
           </div>
         </div>
       </header>
+
+      {/* 错误提示 */}
+      {error && (
+        <div className="max-w-6xl mx-auto px-6 mt-4">
+          <div className="bg-red-500/20 border border-red-500 text-red-400 px-4 py-3 rounded-lg flex justify-between items-center">
+            <span>⚠️ {error}</span>
+            <button 
+              onClick={() => setError(null)}
+              className="text-red-400 hover:text-red-300"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+      )}
 
       <main className="max-w-6xl mx-auto px-6 py-8">
         {/* XP Progress */}
@@ -188,10 +237,12 @@ export default function DashboardPage() {
               {tasks.map((task) => (
                 <div
                   key={task.id}
-                  onClick={() => !task.completed && handleCompleteTask(task.id)}
+                  onClick={() => !task.completed && !completingTask && handleCompleteTask(task.id)}
                   className={`p-4 rounded-lg border border-[#1e3a5f] cursor-pointer transition-all ${
                     task.completed
                       ? 'opacity-50 bg-[#1a3a5f]'
+                      : completingTask === task.id
+                      ? 'opacity-75 bg-[#1e3a5f] animate-pulse'
                       : 'hover:border-cyan-400 hover:bg-[#1e3a5f]'
                   }`}
                 >
