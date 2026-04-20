@@ -31,7 +31,7 @@ export async function POST(request: Request) {
     }
 
     // 验证密码
-    const isValid = await bcrypt.compare(password, user.password);
+    const isValid = await bcrypt.compare(password, user.password || '');
     if (!isValid) {
       return NextResponse.json(
         { success: false, error: '密码错误' },

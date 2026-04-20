@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { toast } from 'sonner'
 import { Github, Chrome } from 'lucide-react'
 
@@ -14,6 +13,7 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [loginData, setLoginData] = useState({ email: '', password: '' })
   const [registerData, setRegisterData] = useState({ email: '', username: '', password: '' })
+  const [activeTab, setActiveTab] = useState<'login' | 'register'>('login')
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -29,7 +29,6 @@ export default function LoginPage() {
       const data = await res.json()
 
       if (data.success) {
-        // Store tokens
         localStorage.setItem('accessToken', data.data.tokens.accessToken)
         localStorage.setItem('refreshToken', data.data.tokens.refreshToken)
         
@@ -75,7 +74,6 @@ export default function LoginPage() {
   }
 
   const handleOAuth = (provider: 'github' | 'google') => {
-    // OAuth flow will be implemented
     toast.info(`${provider} 登录即将上线`)
   }
 
@@ -89,76 +87,95 @@ export default function LoginPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Tabs defaultValue="login" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 bg-[#1e3a5f]">
-              <TabsTrigger value="login">登录</TabsTrigger>
-              <TabsTrigger value="register">注册</TabsTrigger>
-            </TabsList>
+          {/* Tab Switcher */}
+          <div className="grid w-full grid-cols-2 bg-[#1e3a5f] rounded-lg p-1 mb-4">
+            <button
+              onClick={() => setActiveTab('login')}
+              className={`py-2 px-4 rounded-md text-sm font-medium transition-colors ${
+                activeTab === 'login'
+                  ? 'bg-[#00d4ff] text-black'
+                  : 'text-white hover:text-gray-300'
+              }`}
+            >
+              登录
+            </button>
+            <button
+              onClick={() => setActiveTab('register')}
+              className={`py-2 px-4 rounded-md text-sm font-medium transition-colors ${
+                activeTab === 'register'
+                  ? 'bg-[#00d4ff] text-black'
+                  : 'text-white hover:text-gray-300'
+              }`}
+            >
+              注册
+            </button>
+          </div>
 
-            <TabsContent value="login">
-              <form onSubmit={handleLogin} className="space-y-4">
-                <Input
-                  type="email"
-                  placeholder="邮箱"
-                  value={loginData.email}
-                  onChange={(e) => setLoginData({ ...loginData, email: e.target.value })}
-                  className="bg-[#0a1628] border-[#1e3a5f] text-white"
-                  required
-                />
-                <Input
-                  type="password"
-                  placeholder="密码"
-                  value={loginData.password}
-                  onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
-                  className="bg-[#0a1628] border-[#1e3a5f] text-white"
-                  required
-                />
-                <Button
-                  type="submit"
-                  className="w-full bg-[#00d4ff] hover:bg-[#00d4ff]/80 text-black"
-                  disabled={isLoading}
-                >
-                  {isLoading ? '登录中...' : '登录'}
-                </Button>
-              </form>
-            </TabsContent>
+          {/* Login Form */}
+          {activeTab === 'login' && (
+            <form onSubmit={handleLogin} className="space-y-4">
+              <Input
+                type="email"
+                placeholder="邮箱"
+                value={loginData.email}
+                onChange={(e) => setLoginData({ ...loginData, email: e.target.value })}
+                className="bg-[#0a1628] border-[#1e3a5f] text-white"
+                required
+              />
+              <Input
+                type="password"
+                placeholder="密码"
+                value={loginData.password}
+                onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
+                className="bg-[#0a1628] border-[#1e3a5f] text-white"
+                required
+              />
+              <Button
+                type="submit"
+                className="w-full bg-[#00d4ff] hover:bg-[#00d4ff]/80 text-black"
+                disabled={isLoading}
+              >
+                {isLoading ? '登录中...' : '登录'}
+              </Button>
+            </form>
+          )}
 
-            <TabsContent value="register">
-              <form onSubmit={handleRegister} className="space-y-4">
-                <Input
-                  type="email"
-                  placeholder="邮箱"
-                  value={registerData.email}
-                  onChange={(e) => setRegisterData({ ...registerData, email: e.target.value })}
-                  className="bg-[#0a1628] border-[#1e3a5f] text-white"
-                  required
-                />
-                <Input
-                  type="text"
-                  placeholder="用户名"
-                  value={registerData.username}
-                  onChange={(e) => setRegisterData({ ...registerData, username: e.target.value })}
-                  className="bg-[#0a1628] border-[#1e3a5f] text-white"
-                  required
-                />
-                <Input
-                  type="password"
-                  placeholder="密码"
-                  value={registerData.password}
-                  onChange={(e) => setRegisterData({ ...registerData, password: e.target.value })}
-                  className="bg-[#0a1628] border-[#1e3a5f] text-white"
-                  required
-                />
-                <Button
-                  type="submit"
-                  className="w-full bg-[#00d4ff] hover:bg-[#00d4ff]/80 text-black"
-                  disabled={isLoading}
-                >
-                  {isLoading ? '注册中...' : '注册'}
-                </Button>
-              </form>
-            </TabsContent>
-          </Tabs>
+          {/* Register Form */}
+          {activeTab === 'register' && (
+            <form onSubmit={handleRegister} className="space-y-4">
+              <Input
+                type="email"
+                placeholder="邮箱"
+                value={registerData.email}
+                onChange={(e) => setRegisterData({ ...registerData, email: e.target.value })}
+                className="bg-[#0a1628] border-[#1e3a5f] text-white"
+                required
+              />
+              <Input
+                type="text"
+                placeholder="用户名"
+                value={registerData.username}
+                onChange={(e) => setRegisterData({ ...registerData, username: e.target.value })}
+                className="bg-[#0a1628] border-[#1e3a5f] text-white"
+                required
+              />
+              <Input
+                type="password"
+                placeholder="密码"
+                value={registerData.password}
+                onChange={(e) => setRegisterData({ ...registerData, password: e.target.value })}
+                className="bg-[#0a1628] border-[#1e3a5f] text-white"
+                required
+              />
+              <Button
+                type="submit"
+                className="w-full bg-[#00d4ff] hover:bg-[#00d4ff]/80 text-black"
+                disabled={isLoading}
+              >
+                {isLoading ? '注册中...' : '注册'}
+              </Button>
+            </form>
+          )}
 
           <div className="mt-6">
             <div className="relative">

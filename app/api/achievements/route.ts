@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const { type, value } = body
 
-    let unlockedAchievements = []
+    let unlockedAchievements: any[] = []
 
     if (type === 'task') {
       unlockedAchievements = await checkTaskAchievements(value)

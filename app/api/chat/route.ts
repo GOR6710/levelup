@@ -189,7 +189,7 @@ async function completeTask(args: any) {
   return {
     success: true,
     task: completed,
-    message: `🎉 任务「${completed.title}」已完成！获得 ${completed.xp} XP`,
+    message: `🎉 任务已完成！获得 ${completed.xpGained} XP`,
     requiresConfirmation: false
   }
 }

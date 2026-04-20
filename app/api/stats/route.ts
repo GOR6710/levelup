@@ -47,8 +47,9 @@ export async function GET(request: Request) {
     }
 
     // 计算等级信息
-    const level = Math.floor(user.xp / 1000) + 1;
-    const currentXP = user.xp % 1000;
+    const userXP = user.stats?.currentXP || 0;
+    const level = Math.floor(userXP / 1000) + 1;
+    const currentXP = userXP % 1000;
     const maxXP = 1000;
 
     // 计算连续天数

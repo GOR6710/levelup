@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { LevelUpSDK } from '../../../shared/sdk';
-import type { Task, UserStats, Stat } from '../../../shared/types';
+import { LevelUpAPI } from '@/shared/api/client';
+import type { Task, UserStats, Stat } from '@/shared/types';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
 
@@ -15,8 +15,6 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const [error, setError] = useState<string | null>(null);
-
   const getToken = () => {
     if (typeof window !== 'undefined') {
       return localStorage.getItem('accessToken');
@@ -24,14 +22,7 @@ export default function DashboardPage() {
     return null;
   };
 
-  const sdk = new LevelUpSDK({
-    baseURL: API_BASE_URL,
-    getToken,
-    onTokenRefresh: (tokens) => {
-      localStorage.setItem('accessToken', tokens.accessToken);
-      localStorage.setItem('refreshToken', tokens.refreshToken);
-    },
-  });
+  const sdk = new LevelUpAPI(API_BASE_URL, getToken);
 
   useEffect(() => {
     checkAuth();
