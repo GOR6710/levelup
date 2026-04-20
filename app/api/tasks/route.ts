@@ -142,10 +142,10 @@ export async function PUT(request: Request) {
 
     // 如果任务完成，更新用户 XP
     if (updates.completed && !task.completed) {
-      await prisma.user.update({
-        where: { id: decoded.userId },
+      await prisma.userStat.update({
+        where: { userId: decoded.userId },
         data: {
-          xp: { increment: task.xp },
+          currentXP: { increment: task.xp },
         },
       });
     }

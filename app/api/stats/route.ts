@@ -53,19 +53,24 @@ export async function GET(request: Request) {
     const maxXP = 1000;
 
     // 计算连续天数
-    const completedTasks = user.tasks.filter(t => t.completed);
+    const completedTasks = user.tasks?.filter((t: any) => t.completed) || [];
     const streakDays = completedTasks.length > 0 ? 7 : 0; // 简化计算
 
     const userStats = {
       level,
       currentXP,
       maxXP,
-      totalPower: user.stats.reduce((sum, s) => sum + s.value, 0),
+      totalPower: user.stats?.totalPower || 0,
       achievementsCount: completedTasks.length,
       streakDays,
     };
 
-    const stats = user.stats.map(stat => ({
+    // 获取属性列表
+    const stats = await prisma.stat.findMany({
+      where: { userId: decoded.userId },
+    });
+
+    const formattedStats = stats.map(stat => ({
       name: stat.name,
       value: stat.value,
       maxValue: stat.maxValue,
@@ -77,7 +82,7 @@ export async function GET(request: Request) {
       success: true,
       data: {
         userStats,
-        stats,
+        stats: formattedStats,
       },
     });
   } catch (error: any) {

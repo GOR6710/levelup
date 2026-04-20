@@ -13,6 +13,8 @@ export default function DashboardPage() {
   const [stats, setStats] = useState<Stat[]>([]);
   const [userStats, setUserStats] = useState<UserStats | null>(null);
   const [loading, setLoading] = useState(true);
+  const [completingTask, setCompletingTask] = useState<string | null>(null);
+  const [showSuccessAnimation, setShowSuccessAnimation] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const getToken = () => {
