@@ -1,51 +1,65 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
-import { generateTokens, comparePassword } from '@/lib/auth'
+import { NextResponse } from 'next/server';
+import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 
-export async function POST(req: NextRequest) {
+const prisma = new PrismaClient();
+const JWT_SECRET = process.env.JWT_SECRET || 'levelup-secret-key';
+
+export async function POST(request: Request) {
   try {
-    const { email, password } = await req.json()
+    const body = await request.json();
+    const { email, password } = body;
 
     if (!email || !password) {
       return NextResponse.json(
-        { success: false, error: 'Email and password required' },
+        { success: false, error: '邮箱和密码必填' },
         { status: 400 }
-      )
+      );
     }
 
-    // Find user
+    // 查找用户
     const user = await prisma.user.findUnique({
-      where: { email }
-    })
+      where: { email },
+    });
 
-    if (!user || !user.password) {
+    if (!user) {
       return NextResponse.json(
-        { success: false, error: 'Invalid credentials' },
-        { status: 401 }
-      )
+        { success: false, error: '用户不存在' },
+        { status: 404 }
+      );
     }
 
-    // Verify password
-    const isValid = comparePassword(password, user.password)
-
+    // 验证密码
+    const isValid = await bcrypt.compare(password, user.password);
     if (!isValid) {
       return NextResponse.json(
-        { success: false, error: 'Invalid credentials' },
+        { success: false, error: '密码错误' },
         { status: 401 }
-      )
+      );
     }
 
-    // Generate tokens
-    const tokens = generateTokens({ userId: user.id, email: user.email })
+    // 生成 Token
+    const accessToken = jwt.sign(
+      { userId: user.id, email: user.email },
+      JWT_SECRET,
+      { expiresIn: '15m' }
+    );
 
-    // Store refresh token
+    const refreshToken = jwt.sign(
+      { userId: user.id },
+      JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+
+    // 保存 refresh token
     await prisma.refreshToken.create({
       data: {
-        token: tokens.refreshToken,
+        token: refreshToken,
         userId: user.id,
-        expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) // 30 days
-      }
-    })
+        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      },
+    });
 
     return NextResponse.json({
       success: true,
@@ -54,17 +68,18 @@ export async function POST(req: NextRequest) {
           id: user.id,
           email: user.email,
           username: user.username,
-          avatar: user.avatar
         },
-        tokens
-      }
-    })
-
-  } catch (error) {
-    console.error('Login error:', error)
+        tokens: {
+          accessToken,
+          refreshToken,
+        },
+      },
+    });
+  } catch (error: any) {
+    console.error('登录错误:', error);
     return NextResponse.json(
-      { success: false, error: 'Login failed' },
+      { success: false, error: '登录失败' },
       { status: 500 }
-    )
+    );
   }
 }

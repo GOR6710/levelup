@@ -1,116 +1,164 @@
-import { NextResponse } from 'next/server'
-import { 
-  getTasks, 
-  getUserState, 
-  addTask, 
-  deleteTaskById, 
-  completeTaskById, 
-  updateStat,
-  getState 
-} from '@/lib/store'
+import { NextResponse } from 'next/server';
+import { PrismaClient } from '@prisma/client';
+import jwt from 'jsonwebtoken';
 
-// 获取所有任务
-export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url)
-  const type = searchParams.get('type')
-  
-  const state = await getState()
-  let result = state.tasks
-  if (type) {
-    result = state.tasks.filter(t => t.type === type)
+const prisma = new PrismaClient();
+const JWT_SECRET = process.env.JWT_SECRET || 'levelup-secret-key';
+
+// 验证 JWT Token
+function verifyToken(authHeader: string | null) {
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return null;
   }
   
-  return NextResponse.json({ tasks: result, userState: state.userState })
+  const token = authHeader.substring(7);
+  try {
+    return jwt.verify(token, JWT_SECRET) as { userId: string };
+  } catch {
+    return null;
+  }
 }
 
-// 创建新任务
+// 获取任务列表
+export async function GET(request: Request) {
+  try {
+    const authHeader = request.headers.get('Authorization');
+    const decoded = verifyToken(authHeader);
+    
+    if (!decoded) {
+      return NextResponse.json(
+        { success: false, error: '未授权' },
+        { status: 401 }
+      );
+    }
+
+    const { searchParams } = new URL(request.url);
+    const type = searchParams.get('type');
+    const completed = searchParams.get('completed');
+
+    const where: any = { userId: decoded.userId };
+    if (type) where.type = type;
+    if (completed !== null) where.completed = completed === 'true';
+
+    const tasks = await prisma.task.findMany({
+      where,
+      orderBy: [
+        { completed: 'asc' },
+        { createdAt: 'desc' },
+      ],
+    });
+
+    return NextResponse.json({
+      success: true,
+      data: tasks,
+    });
+  } catch (error: any) {
+    console.error('获取任务错误:', error);
+    return NextResponse.json(
+      { success: false, error: '获取任务失败' },
+      { status: 500 }
+    );
+  }
+}
+
+// 创建任务
 export async function POST(request: Request) {
   try {
-    const body = await request.json()
-    const { title, description, type = 'daily', difficulty = 'medium', xp } = body
+    const authHeader = request.headers.get('Authorization');
+    const decoded = verifyToken(authHeader);
     
-    if (!title) {
-      return NextResponse.json({ error: '任务名称不能为空' }, { status: 400 })
+    if (!decoded) {
+      return NextResponse.json(
+        { success: false, error: '未授权' },
+        { status: 401 }
+      );
     }
-    
-    // 计算 XP
-    const xpValue = xp || { easy: 100, medium: 200, hard: 500 }[difficulty as string] || 200
-    
-    const newTask = await addTask({
-      title,
-      description: description || '',
-      type: type as any,
-      difficulty: difficulty as any,
-      xp: xpValue,
-      completed: false,
-    })
-    
-    return NextResponse.json({ 
-      success: true, 
-      task: newTask,
-      message: `任务「${title}」创建成功！获得潜力 XP: +${xpValue}`
-    })
-  } catch (error) {
-    console.error('Create task error:', error)
-    return NextResponse.json({ error: '创建任务失败' }, { status: 500 })
+
+    const body = await request.json();
+    const { title, description, type, difficulty, xp, dueDate } = body;
+
+    if (!title || !type) {
+      return NextResponse.json(
+        { success: false, error: '标题和类型必填' },
+        { status: 400 }
+      );
+    }
+
+    const task = await prisma.task.create({
+      data: {
+        title,
+        description,
+        type,
+        difficulty: difficulty || 'medium',
+        xp: xp || 100,
+        dueDate: dueDate ? new Date(dueDate) : null,
+        userId: decoded.userId,
+      },
+    });
+
+    return NextResponse.json({
+      success: true,
+      data: task,
+    });
+  } catch (error: any) {
+    console.error('创建任务错误:', error);
+    return NextResponse.json(
+      { success: false, error: '创建任务失败' },
+      { status: 500 }
+    );
   }
 }
 
-// 更新任务
+// 更新任务 (完成任务)
 export async function PUT(request: Request) {
   try {
-    const body = await request.json()
-    const { id, updates } = body
+    const authHeader = request.headers.get('Authorization');
+    const decoded = verifyToken(authHeader);
     
-    if (!id) {
-      return NextResponse.json({ error: '任务ID不能为空' }, { status: 400 })
+    if (!decoded) {
+      return NextResponse.json(
+        { success: false, error: '未授权' },
+        { status: 401 }
+      );
     }
-    
-    // 处理任务完成
-    if (updates?.completed === true) {
-      const completedTask = await completeTaskById(id)
-      if (!completedTask) {
-        return NextResponse.json({ error: '任务不存在' }, { status: 404 })
-      }
-      
-      return NextResponse.json({ 
-        success: true,
-        task: completedTask,
-        message: `任务「${completedTask.title}」已完成！获得 ${completedTask.xp} XP`
-      })
-    }
-    
-    return NextResponse.json({ 
-      success: true,
-      message: `任务更新成功！`
-    })
-  } catch (error) {
-    console.error('Update task error:', error)
-    return NextResponse.json({ error: '更新任务失败' }, { status: 500 })
-  }
-}
 
-// 删除任务
-export async function DELETE(request: Request) {
-  try {
-    const { searchParams } = new URL(request.url)
-    const id = searchParams.get('id')
-    
+    const body = await request.json();
+    const { id, updates } = body;
+
     if (!id) {
-      return NextResponse.json({ error: '任务ID不能为空' }, { status: 400 })
+      return NextResponse.json(
+        { success: false, error: '任务 ID 必填' },
+        { status: 400 }
+      );
     }
-    
-    const deletedTask = await deleteTaskById(id)
-    if (!deletedTask) {
-      return NextResponse.json({ error: '任务不存在' }, { status: 404 })
+
+    const task = await prisma.task.update({
+      where: { id, userId: decoded.userId },
+      data: {
+        ...updates,
+        completedAt: updates.completed ? new Date() : null,
+      },
+    });
+
+    // 如果任务完成，更新用户 XP
+    if (updates.completed && !task.completed) {
+      await prisma.user.update({
+        where: { id: decoded.userId },
+        data: {
+          xp: { increment: task.xp },
+        },
+      });
     }
-    
-    return NextResponse.json({ 
-      success: true, 
-      deletedTask,
-      message: `任务「${deletedTask.title}」已删除`
-    })
-  } catch (error) {
-    return NextResponse.json({ error: '删除任务失败' }, { status: 500 })
+
+    return NextResponse.json({
+      success: true,
+      data: task,
+    });
+  } catch (error: any) {
+    console.error('更新任务错误:', error);
+    return NextResponse.json(
+      { success: false, error: '更新任务失败' },
+      { status: 500 }
+    );
   }
 }
