@@ -27,7 +27,7 @@ interface AchievementSystemProps {
   onAchievementUnlocked?: (achievement: Achievement) => void
 }
 
-const categoryConfig = {
+const categoryConfig: Record<string, { label: string; color: string; icon: any }> = {
   task: { label: '任务', color: 'bg-blue-500', icon: Target },
   level: { label: '等级', color: 'bg-green-500', icon: Star },
   streak: { label: '连续', color: 'bg-orange-500', icon: Flame },

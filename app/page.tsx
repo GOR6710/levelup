@@ -208,9 +208,9 @@ export default function Home() {
               currentXP={currentXP}
               maxXP={maxXP}
               title="初级冒险者"
-              rank="进阶"
+              
             />
-            <StatsPanel stats={stats} totalPower={totalPower} />
+            <StatsPanel />
             <StatsDashboard tasks={tasks} />
           </div>
         )
@@ -271,7 +271,7 @@ export default function Home() {
                 </div>
               </div>
             </div>
-            <StatsPanel stats={stats} totalPower={totalPower} />
+            <StatsPanel />
           </div>
         )
       default:
@@ -444,10 +444,10 @@ export default function Home() {
               currentXP={currentXP}
               maxXP={maxXP}
               title="初级冒险者"
-              rank="进阶"
+              
             />
 
-            <StatsPanel stats={stats} totalPower={totalPower} />
+            <StatsPanel />
             
             <StatsDashboard tasks={tasks} />
             

@@ -6,8 +6,7 @@ import {
   addTask, 
   deleteTaskById, 
   completeTaskById, 
-  updateStat,
-  getState 
+  updateStat
 } from '@/lib/store'
 
 // 初始化 OpenAI 客户端 (OpenRouter)
@@ -43,15 +42,15 @@ export async function POST(request: Request) {
     }
     
     // 获取当前状态
-    const currentState = await getState()
+    const currentState = await getUserState()
     
     // 构建系统提示 - 让 AI 返回 JSON 格式的命令
     const systemPrompt = `你是 LevelUp 游戏化成长系统的 AI 助手。
 
 当前用户状态：
-- 等级: ${currentState.userState.level} | XP: ${currentState.userState.currentXP}/${currentState.userState.maxXP}
-- 连胜: ${currentState.userState.streak}天 | 成就: ${currentState.userState.achievements}个
-- 属性: ${currentState.userState.stats.map(s => `${s.name}${s.value}`).join('/')}
+- 等级: ${currentState.level} | XP: ${currentState.currentXP}/${currentState.maxXP}
+- 连胜: ${currentState.streak}天 | 成就: ${currentState.achievements}个
+- 属性: ${currentState.stats.map(s => `${s.name}${s.value}`).join('/')}
 
 当前任务列表：
 ${currentState.tasks.map(t => `- [${t.completed ? 'x' : ' '}] ${t.title} (${t.type}, ${t.difficulty}, +${t.xp}XP) ID:${t.id}`).join('\n')}
@@ -189,7 +188,7 @@ async function completeTask(args: any) {
   return {
     success: true,
     task: completed,
-    message: `🎉 任务已完成！获得 ${completed.xpGained} XP`,
+    message: `🎉 任务已完成！获得 ${completed.xp} XP`,
     requiresConfirmation: false
   }
 }

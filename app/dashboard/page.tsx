@@ -42,9 +42,10 @@ export default function DashboardPage() {
     try {
       setLoading(true);
       setError(null);
+
       const [tasksRes, statsRes] = await Promise.all([
         sdk.getTasks(),
-        sdk.getStats(),
+        sdk.getStats()
       ]);
 
       if (tasksRes.success) {
@@ -66,9 +67,6 @@ export default function DashboardPage() {
       setLoading(false);
     }
   };
-
-  const [completingTask, setCompletingTask] = useState<string | null>(null);
-  const [showSuccessAnimation, setShowSuccessAnimation] = useState(false);
 
   const handleCompleteTask = async (taskId: string) => {
     if (completingTask) return; // 防止重复点击
@@ -167,104 +165,128 @@ export default function DashboardPage() {
       )}
 
       <main className="max-w-6xl mx-auto px-6 py-8">
-        {/* XP Progress */}
-        {userStats && (
-          <div className="bg-[#0f2642] border border-[#1e3a5f] rounded-xl p-6 mb-8">
-            <div className="flex justify-between mb-2">
-              <span className="text-white">经验值</span>
-              <span className="text-cyan-400">
-                {userStats.currentXP} / {userStats.maxXP}
-              </span>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* 任务列表 */}
+          <div className="lg:col-span-2 space-y-4">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold text-white">任务列表</h2>
+              <button
+                onClick={loadData}
+                className="text-cyan-400 hover:text-cyan-300 text-sm"
+              >
+                🔄 刷新
+              </button>
             </div>
-            <div className="w-full bg-[#1e3a5f] rounded-full h-3">
-              <div
-                className="bg-cyan-400 h-3 rounded-full transition-all duration-500"
-                style={{
-                  width: `${(userStats.currentXP / userStats.maxXP) * 100}%`,
-                }}
-              />
-            </div>
-            <div className="flex justify-between mt-4 text-sm text-gray-400">
-              <span>🔥 连续 {userStats.streakDays} 天</span>
-              <span>⚡ 总战力 {userStats.totalPower}</span>
-              <span>🏆 成就 {userStats.achievementsCount}</span>
-            </div>
-          </div>
-        )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Stats Section */}
-          <div className="bg-[#0f2642] border border-[#1e3a5f] rounded-xl p-6">
-            <h2 className="text-xl font-bold mb-6">属性</h2>
-            <div className="space-y-4">
-              {stats.map((stat) => {
-                const percentage = (stat.value / stat.maxValue) * 100;
-                return (
-                  <div key={stat.name}>
-                    <div className="flex justify-between mb-1">
-                      <span className="flex items-center gap-2">
-                        <span>{stat.icon}</span>
-                        <span>{stat.name}</span>
-                      </span>
-                      <span className="text-cyan-400">{stat.value}</span>
-                    </div>
-                    <div className="w-full bg-[#1e3a5f] rounded-full h-2">
-                      <div
-                        className="h-2 rounded-full transition-all duration-500"
-                        style={{
-                          width: `${percentage}%`,
-                          backgroundColor: stat.color,
-                        }}
-                      />
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Tasks Section */}
-          <div className="bg-[#0f2642] border border-[#1e3a5f] rounded-xl p-6">
-            <h2 className="text-xl font-bold mb-6">任务</h2>
-            <div className="space-y-3 max-h-96 overflow-y-auto">
-              {tasks.map((task) => (
+            {tasks.length === 0 ? (
+              <div className="bg-[#0f2642] border border-[#1e3a5f] rounded-lg p-8 text-center">
+                <div className="text-gray-400 mb-2">📋</div>
+                <div className="text-gray-400">暂无任务</div>
+                <div className="text-gray-500 text-sm mt-1">添加你的第一个任务开始升级吧！</div>
+              </div>
+            ) : (
+              tasks.map((task) => (
                 <div
                   key={task.id}
-                  onClick={() => !task.completed && !completingTask && handleCompleteTask(task.id)}
-                  className={`p-4 rounded-lg border border-[#1e3a5f] cursor-pointer transition-all ${
-                    task.completed
-                      ? 'opacity-50 bg-[#1a3a5f]'
-                      : completingTask === task.id
-                      ? 'opacity-75 bg-[#1e3a5f] animate-pulse'
-                      : 'hover:border-cyan-400 hover:bg-[#1e3a5f]'
+                  className={`bg-[#0f2642] border border-[#1e3a5f] rounded-lg p-4 hover:border-cyan-500/50 transition-colors ${
+                    task.completed ? 'opacity-50' : ''
                   }`}
                 >
-                  <div className="flex justify-between items-start mb-2">
-                    <h3
-                      className={`font-bold ${
-                        task.completed ? 'line-through text-gray-400' : 'text-white'
-                      }`}
-                    >
-                      {task.title}
-                    </h3>
-                    <span
-                      className={`text-xs px-2 py-1 rounded text-black font-bold ${getTaskTypeColor(
-                        task.type
-                      )}`}
-                    >
-                      {getTaskTypeLabel(task.type)}
-                    </span>
-                  </div>
-                  {task.description && (
-                    <p className="text-sm text-gray-400 mb-2">{task.description}</p>
-                  )}
-                  <div className="flex justify-between text-sm">
-                    <span className="text-cyan-400">+{task.xp} XP</span>
-                    <span className="text-gray-500 capitalize">{task.difficulty}</span>
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className={`${getTaskTypeColor(task.type)} text-white text-xs px-2 py-1 rounded`}>
+                          {getTaskTypeLabel(task.type)}
+                        </span>
+                        {task.completed && (
+                          <span className="bg-green-500 text-white text-xs px-2 py-1 rounded">
+                            已完成
+                          </span>
+                        )}
+                      </div>
+                      <h3 className={`font-medium ${task.completed ? 'line-through text-gray-400' : 'text-white'}`}>
+                        {task.title}
+                      </h3>
+                      {task.description && (
+                        <p className="text-gray-400 text-sm mt-1">{task.description}</p>
+                      )}
+                      <div className="flex items-center gap-4 mt-2 text-sm text-gray-400">
+                        <span>💪 {task.xp} XP</span>
+                        {task.dueDate && (
+                          <span>📅 {new Date(task.dueDate).toLocaleDateString('zh-CN')}</span>
+                        )}
+                      </div>
+                    </div>
+                    {!task.completed && (
+                      <button
+                        onClick={() => handleCompleteTask(task.id)}
+                        disabled={completingTask === task.id}
+                        className="ml-4 bg-cyan-500 hover:bg-cyan-600 text-black font-bold py-2 px-4 rounded-lg transition-colors disabled:opacity-50"
+                      >
+                        {completingTask === task.id ? '完成中...' : '完成'}
+                      </button>
+                    )}
                   </div>
                 </div>
-              ))}
-            </div>
+              ))
+            )}
+          </div>
+
+          {/* 属性面板 */}
+          <div className="space-y-4">
+            <h2 className="text-xl font-bold text-white mb-4">属性面板</h2>
+            
+            {userStats && (
+              <div className="bg-[#0f2642] border border-[#1e3a5f] rounded-lg p-4 mb-4">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-gray-400">等级</span>
+                  <span className="text-cyan-400 font-bold">Lv.{userStats.level}</span>
+                </div>
+                <div className="w-full bg-[#1e3a5f] rounded-full h-2 mb-2">
+                  <div 
+                    className="bg-cyan-500 h-2 rounded-full transition-all"
+                    style={{ width: `${(userStats.currentXP / userStats.maxXP) * 100}%` }}
+                  />
+                </div>
+                <div className="text-right text-sm text-gray-400">
+                  {userStats.currentXP} / {userStats.maxXP} XP
+                </div>
+              </div>
+            )}
+
+            {stats.length === 0 ? (
+              <div className="bg-[#0f2642] border border-[#1e3a5f] rounded-lg p-6 text-center">
+                <div className="text-gray-400 mb-2">📊</div>
+                <div className="text-gray-400">暂无属性数据</div>
+              </div>
+            ) : (
+              stats.map((stat) => (
+                <div
+                  key={stat.name}
+                  className="bg-[#0f2642] border border-[#1e3a5f] rounded-lg p-4"
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xl">{stat.icon}</span>
+                      <span className="text-white font-medium">{stat.name}</span>
+                    </div>
+                    <span className="text-cyan-400 font-bold">{stat.value}</span>
+                  </div>
+                  <div className="w-full bg-[#1e3a5f] rounded-full h-2">
+                    <div 
+                      className="h-2 rounded-full transition-all"
+                      style={{ 
+                        width: `${(stat.value / stat.maxValue) * 100}%`,
+                        backgroundColor: stat.color 
+                      }}
+                    />
+                  </div>
+                  <div className="text-right text-xs text-gray-400 mt-1">
+                    {stat.value} / {stat.maxValue}
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </div>
       </main>
