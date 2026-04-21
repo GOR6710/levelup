@@ -41,8 +41,9 @@ export async function POST(request: Request) {
       }
     }
     
-    // 获取当前状态
+    // 获取当前状态和任务
     const currentState = await getUserState()
+    const tasks = await getTasks()
     
     // 构建系统提示 - 让 AI 返回 JSON 格式的命令
     const systemPrompt = `你是 LevelUp 游戏化成长系统的 AI 助手。
@@ -53,7 +54,7 @@ export async function POST(request: Request) {
 - 属性: ${currentState.stats.map(s => `${s.name}${s.value}`).join('/')}
 
 当前任务列表：
-${currentState.tasks.map(t => `- [${t.completed ? 'x' : ' '}] ${t.title} (${t.type}, ${t.difficulty}, +${t.xp}XP) ID:${t.id}`).join('\n')}
+${tasks.map(t => `- [${t.completed ? 'x' : ' '}] ${t.title} (${t.type}, ${t.difficulty}, +${t.xp}XP) ID:${t.id}`).join('\n')}
 
 可用操作：
 1. create_task - 创建任务 (参数: title, type: daily/main/side, difficulty: easy/medium/hard)
@@ -281,6 +282,6 @@ async function handleLocalFallback(message: string) {
 
 // GET 方法 - 获取当前状态
 export async function GET() {
-  const state = await getState()
+  const state = await getUserState()
   return NextResponse.json(state)
 }

@@ -47,8 +47,8 @@ export async function getUserState(): Promise<UserState> {
     level: state.level,
     currentXP: state.currentXP,
     maxXP: state.maxXP,
-    achievements: 12,
-    streak: 5,
+    achievements: state.achievementsCount || 12,
+    streak: state.streakDays || 5,
     stats: defaultStats,
   }
 }
@@ -91,6 +91,16 @@ export async function addXP(amount: number): Promise<UserState> {
   }
 
   return updateUserState({ currentXP, level, maxXP })
+}
+
+// 更新属性
+export async function updateStat(name: string, value: number): Promise<UserState> {
+  const state = await getUserState()
+  const newStats = state.stats.map(stat => 
+    stat.name === name ? { ...stat, value: Math.min(value, stat.maxValue) } : stat
+  )
+  
+  return updateUserState({ stats: newStats })
 }
 
 // 成就相关函数
@@ -176,14 +186,4 @@ export async function completeTaskById(id: string) {
   await addXP(task.xp)
   
   return task
-}
-
-// 更新属性
-export async function updateStat(name: string, value: number): Promise<UserState> {
-  const state = await getUserState()
-  const newStats = state.stats.map(stat => 
-    stat.name === name ? { ...stat, value: Math.min(value, stat.maxValue) } : stat
-  )
-  
-  return updateUserState({ stats: newStats })
 }
