@@ -73,7 +73,7 @@ export default function DashboardPage() {
     
     setCompletingTask(taskId);
     try {
-      const result = await sdk.completeTask(taskId);
+      const result = await sdk.updateTask(taskId, { completed: true });
       if (result.success) {
         setShowSuccessAnimation(true);
         setTimeout(() => setShowSuccessAnimation(false), 1500);

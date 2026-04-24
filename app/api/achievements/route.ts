@@ -3,10 +3,13 @@ import { prisma } from '@/lib/prisma'
 import { initializeAchievements, getAchievements, checkTaskAchievements, checkLevelAchievements } from '@/lib/store'
 
 // GET /api/achievements - 获取所有成就
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
+    const { searchParams } = new URL(request.url)
+    const userId = searchParams.get('userId') || 'system'
+    
     // 初始化默认成就
-    await initializeAchievements()
+    await initializeAchievements(userId)
     
     const achievements = await getAchievements()
     
